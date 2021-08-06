@@ -19,10 +19,28 @@ namespace BooksByHalim.Controllers
             _context = context;
         }
 
+
         // GET: Books
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Books.ToListAsync());
+            IEnumerable<Book> obj = _context.Books;
+            obj = obj.OrderByDescending(book => book.Rating);
+            return View(obj);
+        }
+
+
+        // GET: Books/SearchResult=searchTerm
+        public IActionResult SearchResult(string searchTerm)
+        {
+            IEnumerable<Book> obj = _context.Books;
+            obj = obj.Where(book => book.Name.Contains(searchTerm));
+            return View(obj);
+        }
+
+
+        public IActionResult RateBook(Book book)
+        {
+            return View(book);   
         }
 
         // GET: Books/Details/5

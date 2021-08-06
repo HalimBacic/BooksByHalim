@@ -162,3 +162,5 @@ D:\BooksBayHalim\BooksByHalim\BooksByHalim\obj\Debug\net5.0\Razor\Views\Books\De
 D:\BooksBayHalim\BooksByHalim\BooksByHalim\obj\Debug\net5.0\Razor\Views\Books\Details.cshtml.g.cs
 D:\BooksBayHalim\BooksByHalim\BooksByHalim\obj\Debug\net5.0\Razor\Views\Books\Edit.cshtml.g.cs
 D:\BooksBayHalim\BooksByHalim\BooksByHalim\obj\Debug\net5.0\Razor\Views\Books\Index.cshtml.g.cs
+D:\BooksBayHalim\BooksByHalim\BooksByHalim\obj\Debug\net5.0\Razor\Views\Books\RateBook.cshtml.g.cs
+D:\BooksBayHalim\BooksByHalim\BooksByHalim\obj\Debug\net5.0\Razor\Views\Books\SearchResult.cshtml.g.cs
