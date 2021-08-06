@@ -6,18 +6,21 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using BooksByHalim.Data;
 
 namespace BooksByHalim.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public BookDbContext Db { get; set; }
+
+        public HomeController(BookDbContext db)
         {
-            _logger = logger;
+            Db = db;
         }
 
+        //GET /Books/
         public IActionResult Index()
         {
             return View();

@@ -16,6 +16,15 @@
 
   <ItemGroup>
     <Folder Include="Data\Migrations\" />
+    <Folder Include="wwwroot\Images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Images\crookedkingdom.jpg" />
+    <None Include="wwwroot\Images\harrypotterandthedeathlyhallows.jpg" />
+    <None Include="wwwroot\Images\thelastolympian.jpg" />
+    <None Include="wwwroot\Images\thereturnoftheking.jpg" />
+    <None Include="wwwroot\Images\wordsofradiance.jpg" />
   </ItemGroup>
 
 </Project>

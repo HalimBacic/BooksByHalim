@@ -1,8 +1,8 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Books";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div style="top:30px;">
+    <button type="button" onclick="location.href = '@Url.Action("Index","Books")'" class="btn btn-dark">Books</button>
+    <!--   <a class="btn btn-primary text-dark" asp-area="" asp-controller="Books" asp-action="Index">Books</a> -->
 </div>

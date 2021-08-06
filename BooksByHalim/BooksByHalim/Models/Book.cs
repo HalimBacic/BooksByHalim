@@ -15,6 +15,8 @@ namespace BooksByHalim.Models
 
         public string Description { get; set; }
 
+        public string ImagePath { get; set; }
+
         [DisplayName("Release Date")]
         public DateTime ReleaseDate { get; set; }
 
@@ -35,6 +37,5 @@ namespace BooksByHalim.Models
             Actors = act;
 
         }
-
     }
 }

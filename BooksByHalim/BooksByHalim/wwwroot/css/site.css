@@ -69,3 +69,29 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+.mycontainer {
+    display:flex;
+    flex-direction:row;
+    justify-content:space-around;
+    margin:10px;
+}
+
+.left_side {
+    width:25%;
+    height:100%;
+}
+
+.center_side {
+    width: 50%;
+    height:100%
+}
+
+.right_side {
+    width: 20%;
+    height: 100%;
+    display:flex;
+    align-items:center;
+    flex-direction:column;
+    line-height:50px;
+}
