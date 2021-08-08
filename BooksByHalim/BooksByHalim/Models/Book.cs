@@ -22,7 +22,10 @@ namespace BooksByHalim.Models
 
         public string Actors { get; set; }
 
+        [Range(1,5,ErrorMessage ="Rating is between 1 and 5")]
         public double Rating { get; set; }
+
+        public string Type { get; set; }
 
         public Book()
         {

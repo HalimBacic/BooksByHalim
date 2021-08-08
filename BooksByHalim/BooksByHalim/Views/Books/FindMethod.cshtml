@@ -1,21 +1,26 @@
 ﻿@model IEnumerable<BooksByHalim.Models.Book>
 
-@{
+    @{
     ViewData["Title"] = "Index";
-}
+    }
 
 
-<div style="display:inline-block; width:100%">
-
-    <form method="get" asp-controller="Books" asp-action="FindMethod">
-        <input type="text" name="searchTerm" pattern=".{3,}" />
-        <input class="btn btn-primary" type="submit" value="Search" />
-    </form>
-</div>
+    <div style="display:inline-block; width:100%">
 
 
-@foreach (var item in Model)
-{
+
+        <form method="get" asp-controller="Books" asp-action="FindMethod">
+            <input type="text" name="searchTerm"/>
+            <button class="btn btn-primary" type="submit">Find</button>
+        </form>
+
+    </div>
+
+    
+    <a class="btn-link" asp-controller="Books" asp-action="ShowMeMore">View more results</a>
+
+    @foreach (var item in Model)
+    {
     <div class="mycontainer" style="border-top:solid 2px black; border-bottom:solid 2px black">
         <div class="left_side">
             <img src="@Url.Content(item.ImagePath)" height="300" width="180" alt="IMAGE" />
@@ -28,7 +33,7 @@
                         <td colspan="3">@Html.DisplayFor(modelItem => item.Name)</td>
                     </tr>
                     <tr>
-                        <td colspan="3">@Html.DisplayFor(modelItem => item.ReleaseDate.Date)</td>
+                        <td colspan="3">@Html.DisplayFor(modelItem => item.ReleaseDate)</td>
                     </tr>
                     <tr>
                         <td colspan="3">@Html.DisplayFor(modelItem => item.Description)</td>
@@ -44,7 +49,9 @@
         <div class="right_side">
             <h3> Rating: </h3>
             <h2> @Html.DisplayFor(modelItem => item.Rating)</h2>
-            <a class="btn btn-info" asp-controller="Books" asp-action="RateBook" asp-route-bookName="@item.Name">Rate book</a>
+            <div class="">
+                <a class="btn btn-info" asp-controller="Books" asp-action="RateBook" asp-route-id="@item.Name">Rate this</a>
+            </div>
         </div>
     </div>
-}
+    }

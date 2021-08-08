@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BooksByHalim.Data;
 using BooksByHalim.Models;
+using System.IO;
 
 namespace BooksByHalim.Controllers
 {
@@ -14,158 +14,227 @@ namespace BooksByHalim.Controllers
     {
         private readonly BookDbContext _context;
 
+
         public BooksController(BookDbContext context)
         {
             _context = context;
         }
 
-
         // GET: Books
+        [HttpGet]
         public IActionResult Index()
         {
             IEnumerable<Book> obj = _context.Books;
-            obj = obj.OrderByDescending(book => book.Rating);
+            obj = obj.Where(book => book.Type.Contains("book")).OrderByDescending(book => book.Rating);
             return View(obj);
         }
 
-
-        // GET: Books/SearchResult=searchTerm
-        public IActionResult SearchResult(string searchTerm)
+        // GET: Comics
+        [HttpGet]
+        public IActionResult IndexComics()
         {
             IEnumerable<Book> obj = _context.Books;
-            obj = obj.Where(book => book.Name.Contains(searchTerm));
+            obj = obj.Where(book => book.Type.Contains("comic")).OrderByDescending(book => book.Rating);
             return View(obj);
         }
 
 
-        public IActionResult RateBook(Book book)
+        [HttpGet]
+        public IActionResult RateBook(string bookName)
         {
+            Book book = _context.Books.Find(bookName);
             return View(book);   
         }
 
-        // GET: Books/Details/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var book = await _context.Books
-                .FirstOrDefaultAsync(m => m.Name == id);
-            if (book == null)
-            {
-                return NotFound();
-            }
-
-            return View(book);
-        }
-
-        // GET: Books/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Books/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,ReleaseDate,Actors,Rating")] Book book)
+        public IActionResult ChangeRating(Book book)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(book);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(book);
+
+                Book obj = _context.Books.Find(book.Name);
+                double newRate = (obj.Rating + book.Rating) / 2;
+                obj.Rating = newRate;
+                _context.Books.Update(obj);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            
         }
 
-        // GET: Books/Edit/5
-        public async Task<IActionResult> Edit(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
 
-            var book = await _context.Books.FindAsync(id);
-            if (book == null)
-            {
-                return NotFound();
-            }
-            return View(book);
-        }
-
-        // POST: Books/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Name,Description,ReleaseDate,Actors,Rating")] Book book)
+        public IActionResult RateBookCallBack(Book book)
         {
-            if (id != book.Name)
-            {
-                return NotFound();
-            }
+            return RedirectToAction("Index");
+        }
 
-            if (ModelState.IsValid)
+        [HttpGet]
+        public IActionResult FindMethod(string searchTerm)
+        {
+            StreamWriter sw = new(Url.Content("Properties/Cache/cache.txt"));
+            sw.WriteLine(searchTerm);
+            sw.Close();
+
+            IEnumerable<Book> obj = _context.Books;
+
+            if (searchTerm == null)
+                return RedirectToAction("Index");
+            else
             {
+                obj = findBooksCollection(obj, searchTerm,false);
+                return View(obj);
+            }
+        }
+
+
+        [HttpGet]
+        public IActionResult FindMethodComics(string searchTerm)
+        {
+            StreamWriter sw = new(Url.Content("Properties/Cache/cache.txt"));
+            sw.WriteLine(searchTerm);
+            sw.Close();
+
+            IEnumerable<Book> obj = _context.Books;
+
+            if (searchTerm == null)
+                return RedirectToAction("IndexComics");
+            else
+            {
+                obj = findBooksCollection(obj,searchTerm,false);
+
+                return View(obj);
+            }
+        }
+
+
+        //Temp function
+        public IEnumerable<Book> findBooksCollection(IEnumerable<Book> obj,string searchTerm,Boolean more)
+        {
+            string[] search = searchTerm.Split(" ");
+            string ml = moreOrless(search);
+            string strs = stars(search);
+            int num = number(search);
+
+
+            //This can be done with std::less or std::greater
+            // TODO Correct with std::less or std::greater
+            if (ml.Contains("more") && num != 0)
+                obj = getMoreStars(obj, num);
+            else if (ml.Contains("less") && num != 0)
+                obj = getLessStars(obj, num);
+            else if (ml.Contains("newer") && num != 0)
+                obj = getNewerThan(obj, num);
+            else if (ml.Contains("older") && num != 0)
+                obj = getOlderThan(obj, num);
+            else if (strs.Contains("star") && num != 0)
+                obj = getMoreStars(obj, num);
+            else if (num == 0)
+                obj = obj.Where(book => book.Name.Contains(searchTerm));
+
+            if (more)
+            {
+                obj = obj.Concat(obj.Where(book => book.Name.Contains(searchTerm)));
+                return obj;
+            }
+            obj = obj.Take(3);
+            return obj;
+        }
+
+        //Function concaternate all in search and search by name
+        //TODO Make better view for more results
+        public IActionResult ShowMeMore()
+        {
+            StreamReader sw = new(Url.Content("Properties/Cache/cache.txt"));
+            string lastSearch = sw.ReadLine();
+            sw.Close();
+
+            IEnumerable<Book> obj = _context.Books.Where(model => model.Type.Contains("book"));
+
+            if (lastSearch == null)
+                return RedirectToAction("Index");
+            else
+            {
+                obj = findBooksCollection(obj,lastSearch,true);
+
+                return View(obj);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ShowMeMoreComics()
+        {
+            StreamReader sw = new(Url.Content("Properties/Cache/cache.txt"));
+            string lastSearch = sw.ReadLine();
+            sw.Close();
+
+            IEnumerable<Book> obj = _context.Books;
+
+            if (lastSearch == null)
+                return RedirectToAction("IndexComics");
+            else
+            {
+                obj = findBooksCollection(obj, lastSearch, true);
+
+                return View(obj);
+            }
+        }
+
+
+        /*******  TEMP FUNCTIONS   ***********/
+
+        private IEnumerable<Book> getMoreStars(IEnumerable<Book> obj,int num)
+        {
+            obj = obj.Where(book => book.Rating>=num);
+            return obj;
+        }
+
+        private IEnumerable<Book> getNewerThan(IEnumerable<Book> obj, int num)
+        {
+            obj = obj.Where(book => book.ReleaseDate.Year >= num);
+            return obj;
+        }
+
+        private IEnumerable<Book> getOlderThan(IEnumerable<Book> obj, int num)
+        {
+            obj = obj.Where(book => book.ReleaseDate.Year <= num);
+            return obj;
+        }
+
+        private IEnumerable<Book> getLessStars(IEnumerable<Book> obj, int num)
+        {
+            obj = obj.Where(book => book.Rating <= num);
+            return obj;
+        }
+
+        //Function which will find keywords like more,less, older and newer
+        private string moreOrless(string []search)
+        {
+            foreach (string s in search)
+                if (s.ToLower().Equals("more") || s.ToLower().Equals("less") || s.ToLower().Equals("older") || s.ToLower().Equals("newer"))
+                    return s;
+            return "";
+        }
+
+        private string stars(string[] search)
+        {
+            foreach (string s in search)
+                if (s.ToLower().Equals("stars") || s.ToLower().Equals("star"))
+                    return s;
+            return "";
+        }
+
+        private int number(string[] search)
+        {
+            int i = 0;
+            foreach (string s in search)
                 try
                 {
-                    _context.Update(book);
-                    await _context.SaveChangesAsync();
+                    i = int.Parse(s);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception e)
                 {
-                    if (!BookExists(book.Name))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(book);
-        }
-
-        // GET: Books/Delete/5
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var book = await _context.Books
-                .FirstOrDefaultAsync(m => m.Name == id);
-            if (book == null)
-            {
-                return NotFound();
-            }
-
-            return View(book);
-        }
-
-        // POST: Books/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            var book = await _context.Books.FindAsync(id);
-            _context.Books.Remove(book);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool BookExists(string id)
-        {
-            return _context.Books.Any(e => e.Name == id);
+                    var msg = e.Message;
+                }     
+            return i;
         }
     }
 }

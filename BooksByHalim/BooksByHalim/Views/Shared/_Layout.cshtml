@@ -19,13 +19,10 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Books" asp-action="Index">Books</a>
                         </li>
                         <li class="nav-item">
-                            <div class="custom-control custom-switch" style="margin-left: 15px">
-                                <input type="checkbox" class="custom-control-input" id="customSwitch1">
-                                <label class="custom-control-label" for="customSwitch1">Books</label>
-                            </div>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Books" asp-action="IndexComics">Comics</a>
                         </li>
                     </ul>
                     <partial name="_LoginPartial" />
@@ -34,6 +31,7 @@
         </nav>
     </header>
     <div class="container">
+
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

@@ -1,17 +1,12 @@
 ﻿@model BooksByHalim.Models.Book
 
-@{
-    ViewData["Title"] = "RateBook";
-}
-
-<h1>RateBook</h1>
- 
-<h4>Book</h4>
+<h4>Book @Model.Name</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="RateBook">
+        <form asp-action="ChangeRating" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Name" />
             <div class="form-group">
                 <label asp-for="Rating" class="control-label"></label>
                 <input asp-for="Rating" class="form-control" />
@@ -28,6 +23,10 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+@section Scripts
+{
+    @{ 
+        <partial name="_ValidationScriptsPartial.cshtml" />
+     }
 }
+
