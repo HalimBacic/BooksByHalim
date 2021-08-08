@@ -60,9 +60,21 @@
               "target": "Package",
               "version": "[5.0.8, )"
             },
+            "Microsoft.VisualStudio.Validation": {
+              "target": "Package",
+              "version": "[16.10.34, )"
+            },
             "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
               "target": "Package",
               "version": "[5.0.2, )"
+            },
+            "Validation": {
+              "target": "Package",
+              "version": "[2.5.42, )"
+            },
+            "Validator": {
+              "target": "Package",
+              "version": "[1.0.0, )"
             }
           },
           "imports": [

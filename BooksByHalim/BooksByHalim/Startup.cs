@@ -63,7 +63,7 @@ namespace BooksByHalim
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Books}/{action=Index}");
+                    pattern: "{controller=Home}/{action=Index}");
 
                 endpoints.MapRazorPages();
             });
