@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using BooksByHalim.Data;
 using BooksByHalim.Models;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BooksByHalim.Controllers
 {
@@ -40,6 +41,7 @@ namespace BooksByHalim.Controllers
 
 
         [HttpGet]
+     // TODO   [Authorize]
         public IActionResult RateBook(string bookName)
         {
             Book book = _context.Books.Find(bookName);
